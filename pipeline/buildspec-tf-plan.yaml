@@ -31,4 +31,4 @@ phases:
 artifacts:
   name: TerraformPlan
   files:
-    - terraform/$env-terraform.tfplan
+    - "**/*"

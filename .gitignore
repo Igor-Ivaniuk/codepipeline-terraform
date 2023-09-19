@@ -1,2 +1,4 @@
 CodePipeline-values.yaml
 .DS_Store
+.terraform/*
+.terraform*
