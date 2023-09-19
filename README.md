@@ -1,1 +1,1 @@
-# terraform_sample_project
+# Terraform buld pipeline with AWS CodePipelines
