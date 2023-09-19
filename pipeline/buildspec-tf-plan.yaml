@@ -25,6 +25,7 @@ phases:
       - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}"
       - "echo ## TERRAFORM PLAN : Generate the Terraform Plan"
       - "terraform plan -out tfapply"
+      - "terraform show -no-color -json tfapply > tfapply.json"
       - "export BuildID=`echo $CODEBUILD_BUILD_ID | cut -d: -f1`"
       - "export BuildTag=`echo $CODEBUILD_BUILD_ID | cut -d: -f2`"
 
