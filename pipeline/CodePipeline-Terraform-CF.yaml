@@ -32,7 +32,7 @@ Parameters:
   Environment:
     Description: Name of the Environment to configure
     Type: String
-    Default: DEV
+    Default: dev
 
   ApiKey:
     Description: API Key for Infracost
@@ -165,8 +165,8 @@ Resources:
         - Name: CheckCosts
           Actions:
             - Name: check-costs
-              Namespace: CostsVariables
               RunOrder: 1
+              Namespace: CostsVariables
               InputArtifacts:
                 - Name: GitHubCode
                 - Name: TerraformPlan
@@ -208,8 +208,6 @@ Resources:
               InputArtifacts:
                 - Name: GitHubCode
                 - Name: TerraformPlan
-              # OutputArtifacts:
-              #   - Name: ExecuteArtifact
               ActionTypeId:
                 Category: Build
                 Provider: CodeBuild
