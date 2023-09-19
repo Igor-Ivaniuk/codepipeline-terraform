@@ -23,8 +23,10 @@ phases:
       - cat breakdown.json
       - infracost output --path breakdown.json --format table
       - infracost output --path breakdown.json --format diff
-      - "export DiffMessage=`echo infracost output --path breakdown.json --format diff`"
-      - "export DiffValue="`echo jq '.diffTotalMonthlyCost' breakdown.json`"
+      - "export DiffMessage="${echo infracost output --path breakdown.json --format diff}"
+      - "export DiffValue="${echo jq '.diffTotalMonthlyCost' breakdown.json}"
+      - echo ${DiffMessage}
+      - echo ${DiffValue}
 
 
 artifacts:
