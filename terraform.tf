@@ -16,9 +16,22 @@ locals {
   region     = data.aws_region.current.name
 }
 
-resource "aws_s3_bucket" "bucket" {
+resource "aws_s3_bucket" "mybucket" {
   bucket = "iivaniuk.createdbytf"
-  acl = "private"
+}
+
+resource "aws_s3_bucket_ownership_controls" "mybucket_owncontrol" {
+  bucket = aws_s3_bucket.mybucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "private" {
+  depends_on = [aws_s3_bucket_ownership_controls.mybucket_owncontrol]
+
+  bucket = aws_s3_bucket.mybucket.id
+  acl    = "private"
 }
 
 # resource "aws_instance" "web" {
