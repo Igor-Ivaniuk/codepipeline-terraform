@@ -3,6 +3,10 @@ version: 0.2
 env:
   variables:
     CODE_SRC_DIR: "."
+  exported-variables:
+    - DiffMessage
+    - DiffValue
+    - DiffPercentage
 
 phases:
   install:
@@ -16,12 +20,9 @@ phases:
     commands:
       - "cd ${CODEBUILD_SRC_DIR_TerraformPlan}/${CODE_SRC_DIR}"
       - infracost breakdown --path tfapply.json --format json --out-file breakdown.json
-      - infracost diff --path tfapply.json --format json --out-file diff.json
+      - cat breakdown.json
       - infracost output --path breakdown.json --format table
       - infracost output --path breakdown.json --format diff
-      - infracost output --path diff.json --format table
-      - infracost output --path diff.json --format diff
-
 
 artifacts:
   files:

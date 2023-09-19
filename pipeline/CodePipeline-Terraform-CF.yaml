@@ -165,6 +165,7 @@ Resources:
         - Name: CheckCosts
           Actions:
             - Name: check-costs
+              Namespace: CostsVariables
               RunOrder: 1
               InputArtifacts:
                 - Name: GitHubCode
