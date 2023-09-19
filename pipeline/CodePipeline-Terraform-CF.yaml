@@ -34,6 +34,10 @@ Parameters:
     Type: String
     Default: DEV
 
+  ApiKey:
+    Description: API Key for Infracost
+    Type: String
+
 Conditions:
   ConditionSubscriptionEmailPresent:
     !Not [!Equals [!Ref InitialSubscriberEmail, "NONE"]]
@@ -158,6 +162,30 @@ Resources:
                     {"name": "env",             "value": "${Environment}"}
                   ]
 
+        - Name: CheckCosts
+          Actions:
+            - Name: check-costs
+              RunOrder: 1
+              InputArtifacts:
+                - Name: GitHubCode
+                - Name: TerraformPlan
+              OutputArtifacts:
+                - Name: CostsReport
+              ActionTypeId:
+                Category: Build
+                Provider: CodeBuild
+                Owner: AWS
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref CheckCostsProject
+                PrimarySource: GitHubCode
+                EnvironmentVariables: !Sub |
+                  [
+                    {"name": "EXECUTION_ID",      "value": "#{codepipeline.PipelineExecutionId}"},
+                    {"name": "env",               "value": "${Environment}"},
+                    {"name": "INFRACOST_API_KEY", "value": "${ApiKey}"}
+                  ]
+
         - Name: ReviewPlan
           Actions:
             - Name: review-plan
@@ -266,6 +294,21 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: pipeline/buildspec-tf-apply.yaml
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Type: LINUX_CONTAINER
+        Image: !Ref BuildImageName
+      ServiceRole: !GetAtt ProjectServiceRole.Arn
+
+  CheckCostsProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${AWS::StackName}-check-costs
+      Artifacts:
+        Type: CODEPIPELINE
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: pipeline/check-costs.yaml
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER

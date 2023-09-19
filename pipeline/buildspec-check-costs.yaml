@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  variables:
+    CODE_SRC_DIR: "."
+
+phases:
+  install:
+    commands:
+      - "curl -O -L https://infracost.io/downloads/v0.10/infracost-linux-amd64.tar.gz"
+      - tar xzf infracost-linux-amd64.tar.gz -C /tmp
+      - mv /tmp/infracost-linux-amd64 /usr/local/bin/infracost
+      - rm -rf infracost-linux-amd64.tar.gz
+      - infracost --version
+  build:
+    commands:
+      - "cd ${CODEBUILD_SRC_DIR_TerraformPlan}/${CODE_SRC_DIR}"
+
+artifacts:
+  files:
+    - "**/*"
