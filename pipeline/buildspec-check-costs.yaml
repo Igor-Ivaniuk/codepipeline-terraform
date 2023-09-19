@@ -15,7 +15,9 @@ phases:
   build:
     commands:
       - "cd ${CODEBUILD_SRC_DIR_TerraformPlan}/${CODE_SRC_DIR}"
-      - cat tfapply.json
+      - infracost breakdown --path tfapply.json --format json #--out-file infracost.json
+
+
 
 artifacts:
   files:
