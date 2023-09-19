@@ -18,9 +18,9 @@ phases:
       - infracost breakdown --path tfapply.json --format json --out-file breakdown.json
       - infracost diff --path tfapply.json --format json --out-file diff.json
       - infracost output --path breakdown.json --format table
+      - infracost output --path breakdown.json --format diff
       - infracost output --path diff.json --format table
-      - infracost output --path diff.json --format slack-message --out-file slack.md
-      - cat slack.md
+      - infracost output --path diff.json --format diff
 
 
 artifacts:
