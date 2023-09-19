@@ -16,11 +16,11 @@ phases:
     commands:
       - "cd ${CODEBUILD_SRC_DIR_TerraformPlan}/${CODE_SRC_DIR}"
       - infracost breakdown --path tfapply.json --format json --out-file breakdown.json
-      - infracost breakdown --path tfapply.json --format table
       - infracost diff --path tfapply.json --format json --out-file diff.json
-      - infracost diff --path tfapply.json --format diff 
-      - infracost output --path breakdown.json --format slack-message
-      - infracost output --path diff.json --format slack-message
+      - infracost output --path breakdown.json --format table
+      - infracost output --path diff.json --format table
+      - infracost output --path diff.json --format table slack-message --out-file slack.md
+      - cat slack.md
 
 
 artifacts:
