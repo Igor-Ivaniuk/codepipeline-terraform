@@ -1,60 +1,58 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: CI/CD Pipeline for the Terraform Sample project
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CI/CD Pipeline for the Terraform projects
 
 Parameters:
-
   BuildImageName:
     Type: String
     Description: Docker image for application build
-    Default: aws/codebuild/amazonlinux2-x86_64-standard:2.0
+    Default: aws/codebuild/amazonlinux2-x86_64-standard:3.0
 
   PipelineBucket:
     Type: String
-    Description: Name of the State Bucket
+    Description: S3 Bucket to use with Pipeline
 
-  pInitialSubscriberEmail:
-    Description: Add this initial email to the alerts
-    Type: String
-    Default: NONE
-
-  pGitHubRepo:
-    Description: Full name of GithubRepo in the form of orgname/reponame
+  InitialSubscriberEmail:
+    Description: Initial email for the alerts
     Type: String
 
-  pGitHubBranch:
-    Description: Branch on which this codepipeline will trigger
+  GitHubRepo:
+    Description: GitHub repo to watch as <Organization name>/<repository>
     Type: String
 
-  pConnectionArn:
+  GitHubBranch:
+    Description: Branch which this pipeline will monitor
+    Type: String
+
+  CodeStarConnectionArn:
     Description: pre-configured CodeStar Connection to the GitHub Org and Repo
     Type: String
 
-  pEnvironment:
+  Environment:
     Description: Name of the Environment to configure
     Type: String
 
 Conditions:
-  cEMailSubscription: !Not [!Equals [ !Ref pInitialSubscriberEmail, "NONE"]]
+  ConditionSubscriptionEmailPresent:
+    !Not [!Equals [!Ref InitialSubscriberEmail, "NONE"]]
 
 Resources:
-
   PipelineNotificationsTopic:
     Type: AWS::SNS::Topic
     Properties:
       DisplayName: !Sub ${AWS::StackName}-pipeline-notifications
       Subscription:
-      - !If
-        - cEMailSubscription
-        - Endpoint: !Ref 'pInitialSubscriberEmail'
-          Protocol: email
-        - AWS::NoValue
+        - !If
+          - ConditionSubscriptionEmailPresent
+          - Endpoint: !Ref "InitialSubscriberEmail"
+            Protocol: email
+          - !Ref "AWS::NoValue"
 
   PipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub ${AWS::StackName}-pipeline-service-role
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Action: sts:AssumeRole
@@ -65,22 +63,22 @@ Resources:
       Policies:
         - PolicyName: root
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
-              - Sid: UseGitHubConnection
-                Resource: !Ref pConnectionArn
+              - Sid: CodeStarConnection
+                Resource: !Ref CodeStarConnectionArn
                 Effect: Allow
                 Action:
                   - codestar-connections:UseConnection
               - Sid: CodeBuildPermissions
-                Resource: '*'
+                Resource: "*"
                 Effect: Allow
                 Action:
                   - codebuild:StartBuild
                   - codebuild:BatchGetBuilds
                   - sns:Publish
               - Sid: CloudWatchLogs
-                Resource: '*'
+                Resource: "*"
                 Effect: Allow
                 Action:
                   - logs:CreateLogGroup
@@ -92,7 +90,7 @@ Resources:
                   - s3:Get*
                   - s3:ListBucket
                 Resource:
-                 - !Sub arn:aws:s3:::${PipelineBucket}
+                  - !Sub arn:aws:s3:::${PipelineBucket}
               - Sid: AccessPipelineBucketObjects
                 Effect: Allow
                 Action:
@@ -120,14 +118,14 @@ Resources:
                 Category: Source
                 Provider: CodeStarSourceConnection
                 Owner: AWS
-                Version: '1'
+                Version: "1"
               Namespace: GitHubSource
               OutputArtifacts:
                 - Name: GitHubCode
               Configuration:
-                ConnectionArn: !Ref pConnectionArn
-                FullRepositoryId: !Ref pGitHubRepo
-                BranchName: !Ref pGitHubBranch
+                ConnectionArn: !Ref CodeStarConnectionArn
+                FullRepositoryId: !Ref GitHubRepo
+                BranchName: !Ref GitHubBranch
                 OutputArtifactFormat: CODE_ZIP
                 DetectChanges: true
 
@@ -144,7 +142,7 @@ Resources:
                 Category: Build
                 Provider: CodeBuild
                 Owner: AWS
-                Version: '1'
+                Version: "1"
               Configuration:
                 ProjectName: !Ref TerraformPlanProject
                 EnvironmentVariables: !Sub |
@@ -154,7 +152,7 @@ Resources:
                     {"name": "REPO",            "value": "#{GitHubSource.FullRepositoryName}"},
                     {"name": "COMMIT_ID",       "value": "#{GitHubSource.CommitId}"},
                     {"name": "BUCKET",          "value": "${PipelineBucket}"},
-                    {"name": "env",             "value": "${pEnvironment}"}
+                    {"name": "env",             "value": "${Environment}"}
                   ]
 
         - Name: ReviewPlan
@@ -165,7 +163,7 @@ Resources:
                 Category: Approval
                 Provider: Manual
                 Owner: AWS
-                Version: '1'
+                Version: "1"
               Configuration:
                 NotificationArn: !Ref PipelineNotificationsTopic
                 ExternalEntityLink: !Sub "https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/${AWS::AccountId}/projects/#{TfPlan.BuildID}/build/#{TfPlan.BuildID}%3A#{TfPlan.BuildTag}/?region=${AWS::Region}"
@@ -184,7 +182,7 @@ Resources:
                 Category: Build
                 Provider: CodeBuild
                 Owner: AWS
-                Version: '1'
+                Version: "1"
               Configuration:
                 ProjectName: !Ref ExecuteTerraformProject
                 PrimarySource: GitHubCode
@@ -195,7 +193,7 @@ Resources:
                     {"name": "REPO",            "value": "#{GitHubSource.FullRepositoryName}"},
                     {"name": "COMMIT_ID",       "value": "#{GitHubSource.CommitId}"},
                     {"name": "BUCKET",          "value": "${PipelineBucket}"},
-                    {"name": "env",             "value": "${pEnvironment}"}
+                    {"name": "env",             "value": "${Environment}"}
                   ]
 
   ProjectServiceRole:
@@ -203,7 +201,7 @@ Resources:
     Properties:
       RoleName: !Sub ${AWS::StackName}-codebuild-role
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Action: sts:AssumeRole
@@ -215,10 +213,10 @@ Resources:
       Policies:
         - PolicyName: root
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Sid: CloudWatchLogs
-                Resource: '*'
+                Resource: "*"
                 Effect: Allow
                 Action:
                   - logs:CreateLogGroup
@@ -230,7 +228,7 @@ Resources:
                   - s3:Get*
                   - s3:ListBucket
                 Resource:
-                 - !Sub arn:aws:s3:::${PipelineBucket}
+                  - !Sub arn:aws:s3:::${PipelineBucket}
               - Sid: AccessPipelineBucketObjects
                 Effect: Allow
                 Action:
