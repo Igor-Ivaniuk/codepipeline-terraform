@@ -17,9 +17,9 @@ phases:
       - "unzip -o terraform.zip"
       - "mv terraform /bin"
       - "rm terraform.zip"
-  pre_build:
-    commands:
-      - "make tf-init"
+  # pre_build:
+  #   commands:
+  #     - "make tf-init"
   build:
     commands:
       - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}"
