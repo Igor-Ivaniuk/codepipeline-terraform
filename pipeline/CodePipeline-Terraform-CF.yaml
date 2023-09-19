@@ -14,6 +14,7 @@ Parameters:
   InitialSubscriberEmail:
     Description: Initial email for the alerts
     Type: String
+    Default: NONE
 
   GitHubRepo:
     Description: GitHub repo to watch as <Organization name>/<repository>
@@ -22,6 +23,7 @@ Parameters:
   GitHubBranch:
     Description: Branch which this pipeline will monitor
     Type: String
+    Default: main
 
   CodeStarConnectionArn:
     Description: pre-configured CodeStar Connection to the GitHub Org and Repo
@@ -30,6 +32,7 @@ Parameters:
   Environment:
     Description: Name of the Environment to configure
     Type: String
+    Default: DEV
 
 Conditions:
   ConditionSubscriptionEmailPresent:
