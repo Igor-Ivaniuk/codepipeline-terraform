@@ -1,1 +1,1 @@
-# Terraform buld pipeline with AWS CodePipelines
+# Terraform build pipeline with AWS CodePipelines
