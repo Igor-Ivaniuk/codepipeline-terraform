@@ -16,11 +16,16 @@ locals {
   region     = data.aws_region.current.name
 }
 
-resource "aws_instance" "web" {
-  ami           = data.aws_ami.amazon-linux-2.id
-  instance_type = "t3.micro"
-
-  tags = {
-    Name = "Terraform-ExampleServer"
-  }
+resource "aws_s3_bucket" "bucket" {
+  bucket = "iivaniuk.createdbytf"
+  acl = "private"
 }
+
+# resource "aws_instance" "web" {
+#   ami           = data.aws_ami.amazon-linux-2.id
+#   instance_type = "t3.micro"
+
+#   tags = {
+#     Name = "Terraform-ExampleServer"
+#   }
+# }
