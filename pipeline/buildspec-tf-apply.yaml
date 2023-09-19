@@ -16,6 +16,8 @@ phases:
       - "rm terraform.zip"
   build:
     commands:
+      - "tree ."
+      - "ls -Rla"
       - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}"
       - "echo ## TERRAFORM APPLY : Starting with the Terraform Apply"
       - "terraform apply -input=false tfapply"
