@@ -5,8 +5,9 @@ env:
     CODE_SRC_DIR: "."
   exported-variables:
     - DiffMessage
-    - DiffValue
-    - DiffPercentage
+    - PastTotalMonthlyCost
+    - TotalMonthlyCost
+    - DiffTotalMonthlyCost
 
 phases:
   install:
@@ -24,10 +25,13 @@ phases:
       - infracost output --path breakdown.json --format table
       - infracost output --path breakdown.json --format diff
       - "export DiffMessage=`infracost output --path breakdown.json --format diff`"
-      - "export DiffValue=`jq -r '.diffTotalMonthlyCost' breakdown.json`"
+      - "export DiffTotalMonthlyCost=`jq -r '.diffTotalMonthlyCost' breakdown.json`"
+      - "export PastTotalMonthlyCost=`jq -r '.pastTotalMonthlyCost' breakdown.json`"
+      - "export TotalMonthlyCost=`jq -r '.totalMonthlyCost' breakdown.json`"
       - echo ${DiffMessage}
-      - echo ${DiffValue}
-
+      - echo ${TotalMonthlyCost}
+      - echo ${PastTotalMonthlyCost}
+      - echo ${DiffTotalMonthlyCost}
 
 artifacts:
   files:
