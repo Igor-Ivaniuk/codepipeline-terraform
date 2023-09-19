@@ -308,7 +308,7 @@ Resources:
         Type: CODEPIPELINE
       Source:
         Type: CODEPIPELINE
-        BuildSpec: pipeline/check-costs.yaml
+        BuildSpec: pipeline/buildspec-check-costs.yaml
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER
