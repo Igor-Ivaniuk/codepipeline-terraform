@@ -112,7 +112,7 @@ Resources:
             Type: S3
             Location: !Sub ${PipelineBucket}
       Stages:
-        - Name: source
+        - Name: Source
           Actions:
             - Name: GitHub
               RunOrder: 1
@@ -131,9 +131,9 @@ Resources:
                 OutputArtifactFormat: CODE_ZIP
                 DetectChanges: true
 
-        - Name: terraform-plan
+        - Name: CreatePlan
           Actions:
-            - Name: terraform_plan
+            - Name: terraform-plan
               RunOrder: 1
               Namespace: TfPlan
               InputArtifacts:
@@ -157,7 +157,7 @@ Resources:
                     {"name": "env",             "value": "${pEnvironment}"}
                   ]
 
-        - Name: Review-Plan
+        - Name: ReviewPlan
           Actions:
             - Name: review-plan
               RunOrder: 1
@@ -171,7 +171,7 @@ Resources:
                 ExternalEntityLink: !Sub "https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/${AWS::AccountId}/projects/#{TfPlan.BuildID}/build/#{TfPlan.BuildID}%3A#{TfPlan.BuildTag}/?region=${AWS::Region}"
                 CustomData: "Review the Terraform Plan"
 
-        - Name: ExecuteTerraform
+        - Name: ApplyPlan
           Actions:
             - Name: terraform-apply
               RunOrder: 1
@@ -249,7 +249,7 @@ Resources:
         Type: CODEPIPELINE
       Source:
         Type: CODEPIPELINE
-        BuildSpec: buildspec-tf-plan.yaml
+        BuildSpec: pipeline/buildspec-tf-plan.yaml
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER
@@ -264,7 +264,7 @@ Resources:
         Type: CODEPIPELINE
       Source:
         Type: CODEPIPELINE
-        BuildSpec: buildspec-tf-apply.yaml
+        BuildSpec: pipeline/buildspec-tf-apply.yaml
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER
