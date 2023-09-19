@@ -25,20 +25,20 @@ resource "aws_instance" "web" {
   }
 }
 
-# resource "aws_s3_bucket" "mybucket" {
-#   bucket = "iivaniuk.createdbytf"
-# }
+resource "aws_s3_bucket" "mybucket" {
+  bucket = "iivaniuk.createdbytf"
+}
 
-# resource "aws_s3_bucket_ownership_controls" "mybucket_owncontrol" {
-#   bucket = aws_s3_bucket.mybucket.id
-#   rule {
-#     object_ownership = "BucketOwnerPreferred"
-#   }
-# }
+resource "aws_s3_bucket_ownership_controls" "mybucket_owncontrol" {
+  bucket = aws_s3_bucket.mybucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
 
-# resource "aws_s3_bucket_acl" "private" {
-#   depends_on = [aws_s3_bucket_ownership_controls.mybucket_owncontrol]
+resource "aws_s3_bucket_acl" "private" {
+  depends_on = [aws_s3_bucket_ownership_controls.mybucket_owncontrol]
 
-#   bucket = aws_s3_bucket.mybucket.id
-#   acl    = "private"
-# }
+  bucket = aws_s3_bucket.mybucket.id
+  acl    = "private"
+}
