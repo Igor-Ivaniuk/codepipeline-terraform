@@ -199,7 +199,7 @@ Resources:
               Configuration:
                 NotificationArn: !Ref PipelineNotificationsTopic
                 ExternalEntityLink: !Sub "https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/${AWS::AccountId}/projects/#{TfPlan.BuildID}/build/#{TfPlan.BuildID}%3A#{TfPlan.BuildTag}/?region=${AWS::Region}"
-                CustomData: "Review the Terraform Plan"
+                CustomData: "Please review the Terraform Plan. \n Costs: old $#{CostsVariables.PastTotalMonthlyCost}, new $#{CostsVariables.TotalMonthlyCost}, difference $#{CostsVariables.DiffTotalMonthlyCost}. \n Detailed breakdown:\n  #{CostsVariables.DiffMessage}"
 
         - Name: ApplyPlan
           Actions:
