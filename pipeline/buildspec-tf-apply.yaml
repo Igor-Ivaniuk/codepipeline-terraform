@@ -16,6 +16,7 @@ phases:
       - "rm terraform.zip"
   build:
     commands:
+      - yum install tree
       - "tree ."
       - "ls -Rla"
       - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}"
