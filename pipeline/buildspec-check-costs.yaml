@@ -23,13 +23,10 @@ phases:
       - cat breakdown.json
       - infracost output --path breakdown.json --format table
       - infracost output --path breakdown.json --format diff
-      - "export DiffMessage=`echo infracost output --path breakdown.json --format diff`"
-      - "export DiffValue=`echo jq '.diffTotalMonthlyCost' breakdown.json`"
+      - "export DiffMessage=`infracost output --path breakdown.json --format diff`"
+      - "export DiffValue=`jq -r '.diffTotalMonthlyCost' breakdown.json`"
       - echo ${DiffMessage}
-      - echo ${DiffMessage}
-
-
-      # - "export BuildID=`echo $CODEBUILD_BUILD_ID | cut -d: -f1`"
+      - echo ${DiffValue}
 
 
 artifacts:
