@@ -4,24 +4,17 @@ provider "aws" {
    tags = {
      Environment = "Test"
      Owner       = "TFProviders"
-     Project     = "Test"
+     Project     = "TestProject"
    }
  }
 }
 
-
 terraform {
-
-# YOUR BACKEND CONFIGURATION
-# If you want to enable S3 and DynamoDB as Backend, you must to add Permissions Policy on the CodeBuild Role 
-
-# backend "s3" {
-
-#     bucket = "terraform-example"
-#     key = "terraform.state"
-#     dynamodb_table = "terraform-example"
-#     region = "eu-west-1"
-#     encrypt = true
-# }
-
+  backend "s3" {
+      bucket = "iivaniuk-terraform-state-bucket"
+      key = "terraform.state"
+      dynamodb_table = "terraform-state-table"
+      region = "eu-west-1"
+      encrypt = true
+  }
 }
