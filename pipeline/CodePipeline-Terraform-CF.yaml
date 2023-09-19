@@ -187,7 +187,7 @@ Resources:
                 Owner: AWS
                 Version: "1"
               Configuration:
-                ProjectName: !Ref ExecuteTerraformProject
+                ProjectName: !Ref TerraformApplyProject
                 PrimarySource: GitHubCode
                 EnvironmentVariables: !Sub |
                   [
@@ -257,7 +257,7 @@ Resources:
         Image: !Ref BuildImageName
       ServiceRole: !GetAtt ProjectServiceRole.Arn
 
-  ExecuteTerraformProject:
+  TerraformApplyProject:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub ${AWS::StackName}-tf-apply
