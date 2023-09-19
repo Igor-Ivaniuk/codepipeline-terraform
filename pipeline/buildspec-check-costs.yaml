@@ -15,10 +15,10 @@ phases:
   build:
     commands:
       - "cd ${CODEBUILD_SRC_DIR_TerraformPlan}/${CODE_SRC_DIR}"
-      - infracost breakdown --path tfapply.json --format json --out-file infracost.json
+      - infracost breakdown --path tfapply.json --format json --out-file breakdown.json
       - infracost breakdown --path tfapply.json --format table
-      - infracost breakdown --path tfapply.json --format slack-message
-
+      - infracost diff --path tfapply.json --format json --out-file diff.json
+      - infracost diff --path tfapply.json --format table
 
 
 artifacts:
