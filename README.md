@@ -14,8 +14,17 @@ The created pipeline uses the common practices for infrastructure lifecycle and 
 ## CloudFormation template variables
 
 | **Name** | **Description** | **Default value** |
-|:---|:---|:---:|
-| A | b | c |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+|---|---|---|
+| BuildImageName | Build container for the pipeline step | aws/codebuild/amazonlinux2-x86_64-standard:3.0 |
+| PipelineBucket | S3 bucket to use with CodePipelines and store pipeline artifacts |  |
+| InitialSubscriberEmail | EMail address that will receive manual approval requests | NONE |
+| GitHubRepo | GitHub repository to monitor, as <Organization name>/<repository> |  |
+| GitHubBranch | Branch that will be monitored | main |
+| CodeStarConnectionArn | ARN of the CodeStar - GitHub connection (see below) |  |
+| Environment | Environment name | dev |
+| InfracostApiKey | API key for Infracost utility (see below) |  |
+
+## CodeStar connection
+
+
+## Infracost
