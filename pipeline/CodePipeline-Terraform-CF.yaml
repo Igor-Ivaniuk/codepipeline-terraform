@@ -37,14 +37,6 @@ Parameters:
   InfracostApiKey:
     Description: API Key for Infracost
     Type: String
-    
-  TFBackendBucket:
-    Description: S3 bucket for Terraform backend to store state
-    Type: String
-
-  TFBackendDB:
-    Description: DynamoDB table for Terraform backend to store state lock
-    Type: String
 
 Conditions:
   ConditionSubscriptionEmailPresent:
@@ -167,9 +159,7 @@ Resources:
                     {"name": "REPO",                    "value": "#{GitHubSource.FullRepositoryName}"},
                     {"name": "COMMIT_ID",               "value": "#{GitHubSource.CommitId}"},
                     {"name": "BUCKET",                  "value": "${PipelineBucket}"},
-                    {"name": "TF_VAR_env",              "value": "${Environment}"},
-                    {"name": "TF_VAR_backend_bucket",   "value": "${TFBackendBucket}"},
-                    {"name": "TF_VAR_backend_dynamodb", "value": "${TFBackendDB}"}
+                    {"name": "TF_VAR_env",              "value": "${Environment}"}
                   ]
 
         - Name: CheckCosts
@@ -233,9 +223,7 @@ Resources:
                     {"name": "REPO",                    "value": "#{GitHubSource.FullRepositoryName}"},
                     {"name": "COMMIT_ID",               "value": "#{GitHubSource.CommitId}"},
                     {"name": "BUCKET",                  "value": "${PipelineBucket}"},
-                    {"name": "TF_VAR_env",              "value": "${Environment}"},
-                    {"name": "TF_VAR_backend_bucket",   "value": "${TFBackendBucket}"},
-                    {"name": "TF_VAR_backend_dynamodb", "value": "${TFBackendDB}"}
+                    {"name": "TF_VAR_env",              "value": "${Environment}"}
                   ]
 
   ProjectServiceRole:
@@ -280,33 +268,6 @@ Resources:
                   - s3:GetObjectVersion
                 Resource:
                   - !Sub arn:aws:s3:::${PipelineBucket}/*
-              - Sid: AccessBackendBucket
-                Effect: Allow
-                Action:
-                  - s3:ListBucket
-                  - s3:GetBucketVersioning
-                Resource:
-                  - !Sub arn:aws:s3:::${TFBackendBucket}
-              - Sid: AccessBackendBucketObjects
-                Effect: Allow
-                Action:
-                  - s3:PutObject
-                  - s3:PutObjectAcl
-                  - s3:GetObject
-                  - s3:GetObjectVersion
-                  - s3:DeleteObject
-                Resource:
-                  - !Sub arn:aws:s3:::${TFBackendBucket}/*
-              - Sid: AccessBackendDB
-                Effect: Allow
-                Action:
-                  - dynamodb:DescribeTable
-                  - dynamodb:GetItem
-                  - dynamodb:PutItem
-                  - dynamodb:DeleteItem
-                Resource:
-                  - !Sub arn:aws:dynamodb:*:*:table/${TFBackendDB}/*
-
 
   TerraformPlanProject:
     Type: AWS::CodeBuild::Project
