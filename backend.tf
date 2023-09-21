@@ -22,7 +22,7 @@ terraform {
     bucket         = "iivaniuk-terraform-state-bucket" # Hardcoded until Terraform starts supporting 
     key            = "terraform.state"                 # variables in backend config block
     dynamodb_table = "terraform-state-table"           # see: https://github.com/hashicorp/terraform/issues/13022
-    region         = local.region
+    region         = "eu-west-1"                       #
     encrypt        = true
   }
 }
