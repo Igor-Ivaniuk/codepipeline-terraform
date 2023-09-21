@@ -20,9 +20,9 @@ The created pipeline uses the common practices for infrastructure lifecycle and 
 | InitialSubscriberEmail | EMail address that will receive manual approval requests | NONE |
 | GitHubRepo | GitHub repository to monitor, as <Organization name>/<repository> |  |
 | GitHubBranch | Branch that will be monitored | main |
-| CodeStarConnectionArn | ARN of the CodeStar - GitHub connection (see below) |  |
+| CodeStarConnectionArn | ARN of the CodeStar - GitHub connection [see below](#-codestar-connection) |  |
 | Environment | Environment name | dev |
-| InfracostApiKey | API key for Infracost utility (see below) |  |
+| InfracostApiKey | API key for Infracost utility [see below](#-infracost) |  |
 
 ## CodeStar connection
 
