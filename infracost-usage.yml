@@ -4,6 +4,7 @@
 # See https://infracost.io/usage-file/ for docs
 version: 0.1
 resource_usage:
+resource_usage:
   aws_s3_bucket.mybucket:
     standard:
       storage_gb: 2.0 # Total storage in GB.
@@ -11,3 +12,15 @@ resource_usage:
       monthly_tier_2_requests: 500000 # Monthly GET, SELECT, and all other requests (Tier 2).
       monthly_select_data_scanned_gb: 0.0 # Monthly data scanned by S3 Select in GB.
       monthly_select_data_returned_gb: 0.0 # Monthly data returned by S3 Select in GB.
+
+  module.eks.module.eks_managed_node_group["one"].aws_eks_node_group.this[0]:
+    instances: 2 # Number of instances in the EKS node group.
+    operating_system: linux # Override the operating system of the instance, can be: linux, windows, suse, rhel.
+    reserved_instance_type: "" # Offering class for Reserved Instances, can be: convertible, standard.
+    reserved_instance_term: "" # Term for Reserved Instances, can be: 1_year, 3_year.
+    reserved_instance_payment_option: "" # Payment option for Reserved Instances, can be: no_upfront, partial_upfront, all_upfront.
+    monthly_cpu_credit_hrs: 0 # Number of hours in the month where the instance is expected to burst. Only applicable with t2, t3 & t4 Instance types. T2 requires credit_specification to be unlimited.
+    vcpu_count: 0 # Number of the vCPUs for the instance type. Only applicable with t2, t3 & t4 Instance types. T2 requires credit_specification to be unlimited.
+    monthly_hrs: 730.0
+  module.vpc.aws_nat_gateway.this[0]:
+    monthly_data_processed_gb: 0.0 # Monthly data processed by the NAT Gateway in GB.
