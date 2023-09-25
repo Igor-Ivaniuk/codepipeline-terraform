@@ -22,7 +22,7 @@ phases:
       - "terraform init"
   build:
     commands:
-      - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}"
+      - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}/terraform"
       - "echo ## TERRAFORM PLAN : Generate the Terraform Plan"
       - "terraform plan -out tfapply"
       - "terraform show -no-color -json tfapply > tfapply.json"
