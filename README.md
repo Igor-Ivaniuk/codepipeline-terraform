@@ -11,6 +11,12 @@ The created pipeline uses the common practices for infrastructure lifecycle and 
 - review plan - This stage represents a manual approval step needed to decide if the given plan
 - apply - This stage uses the plan created above to provision the infrastructure in the test account.
 
+## Overview
+
+The repository contains a [CloudFormation template](CodePipeline-Terraform-CF.yaml) that after deploying will result in the following setup:
+<img src="assets/pipeline.bgwhite.png" alt="Pipeline" width=6000 />
+
+
 ## CloudFormation template variables
 
 | **Name** | **Description** | **Default value** |
@@ -34,3 +40,5 @@ Please use the [instructions in the AWS blog post](https://aws.amazon.com/blogs/
 [**Infracost**](https://github.com/infracost/infracost) is a tool to show cloud cost estimates for Terraform. Infracost supports over **1,000** Terraform resources across [AWS](https://www.infracost.io/docs/supported_resources/aws), [Azure](https://www.infracost.io/docs/supported_resources/azure) and [Google](https://www.infracost.io/docs/supported_resources/google). We will be using it to create a costs breakdown in our sample Terraform project
 
 To use the open source Infracost utility, please create a free account at (infracost.io) - you can sign up with your GitHub account. Then [get an API key](https://www.infracost.io/docs/#2-get-api-key) and provide it into the **InfracostApiKey** param
+
+

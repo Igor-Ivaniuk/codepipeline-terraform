@@ -3,3 +3,4 @@ CodePipeline-values.yaml
 .terraform/*
 .terraform*
 .infracost/*
+assets/.$pipeline.drawio.bkp
