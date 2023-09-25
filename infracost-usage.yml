@@ -4,7 +4,6 @@
 # See https://infracost.io/usage-file/ for docs
 version: 0.1
 resource_usage:
-resource_usage:
   aws_s3_bucket.mybucket:
     standard:
       storage_gb: 2.0 # Total storage in GB.
