@@ -13,11 +13,19 @@ The created pipeline uses the common practices for infrastructure lifecycle and 
 
 ## Overview
 
-The repository contains a [CloudFormation template](CodePipeline-Terraform-CF.yaml) that after deploying will result in the following setup:
+The repository contains a [CloudFormation template](pipeline/CodePipeline-Terraform-CF.yaml) that after deploying will result in the following setup:
 <img src="assets/pipeline.bgwhite.png" alt="Pipeline" width=6000 />
-
+The whole logic of the solution works as follows:
+1. Developer commits changes to a Terraform template in the GitHub repository
+2. CodePipeline is triggered via CodeStar connection
+3. The source code is checked out
+4. [CodeBuild step](pipeline/buildspec-tf-plan.yaml) executes ```terraform plan``` and outputs the TF plan as artifact
+5. [CodeBuild step](pipeline/buildspec-check-costs.yaml) uses ```infracost breakdown``` to generate costs diff according to changes in TF plan
+6. Approval step pauses the execution of the CodePipeline until the Approver checks the TF plan and the associated changes of costs and approves the deployment of changes
+7. Last [CodeBuild step](pipeline/buildspec-tf-apply.yaml) runs ```terraform apply```
 
 ## CloudFormation template variables
+These variables will be required during deployment of the project's [CloudFormation template](pipeline/CodePipeline-Terraform-CF.yaml):
 
 | **Name** | **Description** | **Default value** |
 |---|---|---|
