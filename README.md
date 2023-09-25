@@ -24,6 +24,26 @@ The whole logic of the solution works as follows:
 6. Approval step pauses the execution of the CodePipeline until the Approver checks the TF plan and the associated changes of costs and approves the deployment of changes
 7. Last [CodeBuild step](pipeline/buildspec-tf-apply.yaml) runs ```terraform apply```
 
+## Directory structure
+```
+├── LICENSE
+├── README.md
+├── assets
+│   ├── pipeline.bgwhite.png
+│   └── pipeline.drawio
+├── infracost-usage.yml
+├── pipeline
+│   ├── CodePipeline-Terraform-CF.yaml
+│   ├── buildspec-check-costs.yaml
+│   ├── buildspec-tf-apply.yaml
+│   └── buildspec-tf-plan.yaml
+└── tf
+    ├── backend.tf
+    ├── eks.tf
+    ├── main.tf
+    └── variables.tf
+```
+
 ## CloudFormation template variables
 These variables will be required during deployment of the project's [CloudFormation template](pipeline/CodePipeline-Terraform-CF.yaml):
 
@@ -48,5 +68,7 @@ Please use the [instructions in the AWS blog post](https://aws.amazon.com/blogs/
 [**Infracost**](https://github.com/infracost/infracost) is a tool to show cloud cost estimates for Terraform. Infracost supports over **1,000** Terraform resources across [AWS](https://www.infracost.io/docs/supported_resources/aws), [Azure](https://www.infracost.io/docs/supported_resources/azure) and [Google](https://www.infracost.io/docs/supported_resources/google). We will be using it to create a costs breakdown in our sample Terraform project
 
 To use the open source Infracost utility, please create a free account at (infracost.io) - you can sign up with your GitHub account. Then [get an API key](https://www.infracost.io/docs/#2-get-api-key) and provide it into the **InfracostApiKey** param
+
+
 
 
