@@ -22,7 +22,7 @@ The whole logic of the solution works as follows:
 4. [CodeBuild step](pipeline/buildspec-tf-plan.yaml) executes ```terraform plan``` and outputs the TF plan as artifact
 5. [CodeBuild step](pipeline/buildspec-check-costs.yaml) uses ```infracost breakdown``` to generate costs diff according to changes in TF plan
 6. Approval step pauses the execution of the CodePipeline until the Approver checks the TF plan and the associated changes of costs and approves the deployment of changes
-7. Last [CodeBuild step](pipeline/buildspec-tf-apply.yaml) runs ```terraform apply```
+7. The last [CodeBuild step](pipeline/buildspec-tf-apply.yaml) runs ```terraform apply```
 
 ## Directory structure
 ```
