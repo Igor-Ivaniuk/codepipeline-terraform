@@ -19,10 +19,11 @@ phases:
       - "rm terraform.zip"
   pre_build:
     commands:
+      - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}/tf"
       - "terraform init"
   build:
     commands:
-      - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}/tf"
+      # - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}/tf"
       - "echo ## TERRAFORM PLAN : Generate the Terraform Plan"
       - "terraform plan -out tfapply"
       - "terraform show -no-color -json tfapply > tfapply.json"
