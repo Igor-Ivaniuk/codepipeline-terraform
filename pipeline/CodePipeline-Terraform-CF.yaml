@@ -248,7 +248,7 @@ Resources:
             Principal:
               Service:
                 - codebuild.amazonaws.com
-      # Used for Terraform, please reduce to minimal
+      # Used for Terraform, please restrict to minimal
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
       Policies:
