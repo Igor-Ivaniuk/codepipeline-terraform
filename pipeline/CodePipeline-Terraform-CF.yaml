@@ -30,13 +30,23 @@ Parameters:
     Type: String
 
   Environment:
-    Description: Name of the Environment to configure
+    Description: Environment label to use
     Type: String
     Default: dev
 
   InfracostApiKey:
     Description: API Key for Infracost
     Type: String
+
+  AutoApproveDelaySeconds:
+    Description: Delay to trigger the auto-approve logic (in seconds)
+    Type: Number
+    Default: 15
+
+  AutoApproveDiffPercentThreshold:
+    Description: Difference between current and projected cloud spend, above which the manual approval will be needed (in %)
+    Type: Number
+    Default: 10
 
 Conditions:
   ConditionSubscriptionEmailPresent:
@@ -197,8 +207,8 @@ Resources:
                 Owner: AWS
                 Version: "1"
               Configuration:
-                NotificationArn: !Ref PipelineNotificationsTopic
-                ExternalEntityLink: !Sub "https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/${AWS::AccountId}/projects/#{TfPlan.BuildID}/build/#{TfPlan.BuildID}%3A#{TfPlan.BuildTag}/?region=${AWS::Region}"
+                # NotificationArn: !Ref PipelineNotificationsTopic
+                # ExternalEntityLink: !Sub "https://${AWS::Region}.console.aws.amazon.com/codesuite/codebuild/${AWS::AccountId}/projects/#{TfPlan.BuildID}/build/#{TfPlan.BuildID}%3A#{TfPlan.BuildTag}/?region=${AWS::Region}"
                 CustomData: "Please review the Terraform Plan. Costs: old $#{CostsVariables.PastTotalMonthlyCost}, new $#{CostsVariables.TotalMonthlyCost}, difference $#{CostsVariables.DiffTotalMonthlyCost}. Detailed breakdown: #{CostsVariables.DiffMessage}"
 
         - Name: ApplyPlan
@@ -238,6 +248,7 @@ Resources:
             Principal:
               Service:
                 - codebuild.amazonaws.com
+      # Used for Terraform, please reduce to minimal
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
       Policies:
@@ -268,6 +279,13 @@ Resources:
                   - s3:GetObjectVersion
                 Resource:
                   - !Sub arn:aws:s3:::${PipelineBucket}/*
+              - Sid: AccessApproveQueue
+                Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                  - sqs:GetQueueUrl
+                Resource:
+                  - !GetAtt AutoApproveQueue.Arn
 
   TerraformPlanProject:
     Type: AWS::CodeBuild::Project
@@ -313,3 +331,27 @@ Resources:
         Type: LINUX_CONTAINER
         Image: !Ref BuildImageName
       ServiceRole: !GetAtt ProjectServiceRole.Arn
+
+  AutoApproveQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${AWS::StackName}-autoapprove-queue
+      DelaySeconds: !Ref AutoApproveDelaySeconds
+
+  AutoApproveQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - Ref: AutoApproveQueue
+      PolicyDocument:
+        Id: AllowIncomingAccess
+        Statement:
+          - Action:
+              - "SQS:SendMessage"
+              - "SQS:ReceiveMessage"
+            Effect: "Allow"
+            Resource:
+              - !GetAtt AutoApproveQueue.Arn
+            Principal:
+              AWS:
+                - !Ref AWS::AccountId
