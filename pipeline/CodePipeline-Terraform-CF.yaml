@@ -194,7 +194,8 @@ Resources:
                   [
                     {"name": "EXECUTION_ID",      "value": "#{codepipeline.PipelineExecutionId}"},
                     {"name": "env",               "value": "${Environment}"},
-                    {"name": "INFRACOST_API_KEY", "value": "${InfracostApiKey}"}
+                    {"name": "INFRACOST_API_KEY", "value": "${InfracostApiKey}"},
+                    {"name": "SQS_QUEUE",         "value": !Ref:AutoApproveQueue}
                   ]
 
         - Name: ReviewPlan
@@ -435,6 +436,24 @@ Resources:
                   - sqs:GetQueueAttributes
                 Resource:
                   - !GetAtt AutoApproveQueue.Arn
+        - PolicyName: PipelineAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codepipeline:EnableStageTransition
+                  - codepipeline:GetPipeline
+                  - codepipeline:GetPipelineState
+                  - codepipeline:GetPipelineExecution
+                  - codepipeline:ListPipelineExecutions
+                  - codepipeline:ListActionExecutions
+                  - codepipeline:ListActionTypes
+                  - codepipeline:ListPipelines
+                  - codepipeline:ListTagsForResource
+                  - codepipeline:PutApprovalResult
+                Resource:
+                  - !Ref Pipeline
 
   LambdaFunctionSqsEventSourceMapping:
     Type: AWS::Lambda::EventSourceMapping

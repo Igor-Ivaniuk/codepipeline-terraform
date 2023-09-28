@@ -32,6 +32,7 @@ phases:
       - echo ${TotalMonthlyCost}
       - echo ${PastTotalMonthlyCost}
       - echo ${DiffTotalMonthlyCost}
+      - echo ${SQS_QUEUE}
 
 artifacts:
   files:
