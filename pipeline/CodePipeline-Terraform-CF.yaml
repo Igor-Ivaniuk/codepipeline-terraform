@@ -347,11 +347,101 @@ Resources:
         Id: AllowIncomingAccess
         Statement:
           - Action:
-              - "SQS:SendMessage"
-              - "SQS:ReceiveMessage"
+              - sqs:SendMessage
+              - sqs:ReceiveMessage
             Effect: "Allow"
             Resource:
               - !GetAtt AutoApproveQueue.Arn
             Principal:
               AWS:
                 - !Ref AWS::AccountId
+
+  AutoApproveLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-autoapprove-function
+      Handler: index.lambda_handler
+      MemorySize: 128
+      Runtime: python3.11
+      Role: !GetAtt LambdaFunctionRole.Arn
+      Environment:
+        Variables:
+          Foo: foo
+          Bar: baz
+      Code:
+        ZipFile: |
+          # Imports
+          import os
+          import boto3
+          import botocore
+          import logging
+          import random
+          import string
+
+          # Set up the logger
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+          #logger.setLevel(logging.DEBUG) # Very verbose
+
+          # Env variables from CFN
+          foo = os.environ.get('Foo')
+          bar = os.environ.get('Bar')
+
+          def lambda_handler(event, context):
+              # Generate a random string to ensure no duplicates are put into DDB table
+              randomstring = (''.join(random.choice(string.ascii_letters) for i in range(10)))
+              logger.info('Random string generated: %s', randomstring)
+              
+              logger.info("#EVENT")
+              logger.info(event)
+              
+              logger.info(foo)
+              logger.info(bar)
+
+  LambdaFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: AppendToLogsPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+        - PolicyName: SQSQueueAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                  - sqs:ReceiveMessage
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource:
+                  - !GetAtt AutoApproveQueue.Arn
+
+  LambdaFunctionSqsEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    DependsOn:
+      - LambdaFunctionRole
+    Properties:
+      BatchSize: 1
+      Enabled: true
+      EventSourceArn: !GetAtt AutoApproveQueue.Arn
+      FunctionName: !GetAtt AutoApproveLambdaFunction.Arn
