@@ -194,8 +194,7 @@ Resources:
                   [
                     {"name": "EXECUTION_ID",      "value": "#{codepipeline.PipelineExecutionId}"},
                     {"name": "env",               "value": "${Environment}"},
-                    {"name": "INFRACOST_API_KEY", "value": "${InfracostApiKey}"},
-                    {"name": "SQS_QUEUE",         "value": !Ref:AutoApproveQueue}
+                    {"name": "INFRACOST_API_KEY", "value": "${InfracostApiKey}"}
                   ]
 
         - Name: ReviewPlan
@@ -331,6 +330,9 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER
         Image: !Ref BuildImageName
+        EnvironmentVariables:
+          - Name: SQS_QUEUE
+            Value: !Sub ${AutoApproveQueue}
       ServiceRole: !GetAtt ProjectServiceRole.Arn
 
   AutoApproveQueue:
@@ -453,7 +455,8 @@ Resources:
                   - codepipeline:ListTagsForResource
                   - codepipeline:PutApprovalResult
                 Resource:
-                  - !Ref Pipeline
+                  - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}
+                  - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}/*
 
   LambdaFunctionSqsEventSourceMapping:
     Type: AWS::Lambda::EventSourceMapping
