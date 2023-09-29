@@ -5,3 +5,4 @@ CodePipeline-values.yaml
 .infracost/*
 assets/.$pipeline.drawio.bkp
 .vscode/*
+.idea/*

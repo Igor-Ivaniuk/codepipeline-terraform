@@ -1,0 +1,6 @@
+{
+  "message": "insert-message",
+  "total-monthly-cost": "insert-total-monthly-cost",
+  "past-total-monthly-cost": "insert-past-total-monthly-cost",
+  "diff-total-monthly-cost": "insert-diff-total-monthly-cost"
+}
