@@ -51,7 +51,7 @@ Parameters:
   AutoApproveDiffAbsoluteThreshold:
     Description: Absolute difference (in $) between current and projected cloud spend, above which the manual approval will be needed
     Type: Number
-    Default: 10
+    Default: 100
 
 Conditions:
   ConditionSubscriptionEmailPresent:
