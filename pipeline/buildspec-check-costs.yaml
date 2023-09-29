@@ -32,7 +32,7 @@ phases:
       - echo ${TotalMonthlyCost}
       - echo ${PastTotalMonthlyCost}
       - echo ${DiffTotalMonthlyCost}
-      - aws sqs send-message --queue-url $SQS_QUEUE --message-body "$(sed -e s/insert-total-monthly-cost/${TotalMonthlyCost}/g -e s/insert-past-total-monthly-cost/${PastTotalMonthlyCost}/g -e s/insert-diff-total-monthly-cost/${DiffTotalMonthlyCost}/g .pipeline/costs.json)"
+      - aws sqs send-message --queue-url $SQS_QUEUE --message-body "$(sed -e s/insert-total-monthly-cost/${TotalMonthlyCost}/g -e s/insert-past-total-monthly-cost/${PastTotalMonthlyCost}/g -e s/insert-diff-total-monthly-cost/${DiffTotalMonthlyCost}/g pipeline/costs.json)"
 #  -e s/insert-message/${DiffMessage}/g
 artifacts:
   files:
