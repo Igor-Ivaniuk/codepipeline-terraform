@@ -44,13 +44,18 @@ Parameters:
     Default: 15
 
   AutoApproveDiffPercentThreshold:
-    Description: Difference between current and projected cloud spend, above which the manual approval will be needed (in %)
+    Description: Relative difference in % between current and projected cloud spend, above which the manual approval will be needed
+    Type: Number
+    Default: 10
+
+  AutoApproveDiffAbsoluteThreshold:
+    Description: Absolute difference (in $) between current and projected cloud spend, above which the manual approval will be needed
     Type: Number
     Default: 10
 
 Conditions:
   ConditionSubscriptionEmailPresent:
-    !Not [!Equals [!Ref InitialSubscriberEmail, "NONE"]]
+    !Not [ !Equals [ !Ref InitialSubscriberEmail, "NONE" ] ]
 
 Resources:
   PipelineNotificationsTopic:
@@ -394,10 +399,10 @@ Resources:
               # Generate a random string to ensure no duplicates are put into DDB table
               randomstring = (''.join(random.choice(string.ascii_letters) for i in range(10)))
               logger.info('Random string generated: %s', randomstring)
-              
+          
               logger.info("#EVENT")
               logger.info(event)
-              
+          
               logger.info(foo)
               logger.info(bar)
 
