@@ -41,7 +41,7 @@ Parameters:
   AutoApproveDelaySeconds:
     Description: Delay to trigger the auto-approve logic (in seconds)
     Type: Number
-    Default: 15
+    Default: 30
 
   AutoApproveDiffPercentThreshold:
     Description: Relative difference in % between current and projected cloud spend, above which the manual approval will be needed
@@ -382,30 +382,16 @@ Resources:
       Code:
         ZipFile: |
           # Imports
-          import os
-          import boto3
-          import botocore
           import logging
-          import random
-          import string
 
           # Set up the logger
           logger = logging.getLogger()
           logger.setLevel(logging.INFO)
           #logger.setLevel(logging.DEBUG) # Very verbose
 
-          # Env variables from CFN
-          foo = os.environ.get('SNSTopic')
-
           def lambda_handler(event, context):
-              # Generate a random string to ensure no duplicates are put into DDB table
-              randomstring = (''.join(random.choice(string.ascii_letters) for i in range(10)))
-              logger.info('Random string generated: %s', randomstring)
-          
               logger.info("#EVENT")
               logger.info(event)
-          
-              logger.info(foo)
 
   LambdaFunctionRole:
     Type: AWS::IAM::Role
