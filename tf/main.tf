@@ -31,19 +31,19 @@ resource "aws_instance" "t3large" {
   instance_type = "t3.large"
 
   tags = {
-    Name = "'Server-t3.large"
+    Name = "Server-t3.large"
   }
 }
 
 
-#resource "aws_instance" "t3micro" {
-#  ami           = data.aws_ami.amazon-linux-2.id
-#  instance_type = "t3.micro"
-#
-#  tags = {
-#    Name = "'Server-t3.micro"
-#  }
-#}
+resource "aws_instance" "t3nano" {
+  ami           = data.aws_ami.amazon-linux-2.id
+  instance_type = "t3.micro"
+
+  tags = {
+    Name = "Server-t3.nano"
+  }
+}
 
 
 #resource "aws_instance" "t32xlarge" {
