@@ -6,37 +6,47 @@ The scope of this pattern is to provide an example terraform configurations to s
 
 The created pipeline uses the common practices for infrastructure lifecycle and has the below stages
 
-- plan - This stage creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure.
-- check costs - This stage prepares the costs report that can help to estimate the changes in monthly costs for the infrastructure managed by current Terraform project
-- review plan - This stage represents a manual approval step needed to decide if the given plan
-- apply - This stage uses the plan created above to provision the infrastructure in the test account.
+- **plan** - This stage creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure.
+- **check costs** - This stage prepares the costs report that can help to estimate the changes in monthly costs for the infrastructure managed by current Terraform project
+- **review plan** - This stage represents a manual approval step needed to decide if the given plan
+- **apply** - This stage uses the plan created above to provision the infrastructure in the test account.
 
 ## Overview
 
 The repository contains a [CloudFormation template](pipeline/CodePipeline-Terraform-CF.yaml) that after deploying will result in the following setup:
-<img src="assets/pipeline.bgwhite.png" alt="Pipeline" width=6000 />
+
+![Pipeline](assets/pipeline.light.png "Solution architecture")
 The whole logic of the solution works as follows:
-1. Developer commits changes to a Terraform template in the GitHub repository
-2. CodePipeline is triggered via CodeStar connection
-3. The source code is checked out
-4. [CodeBuild step](pipeline/buildspec-tf-plan.yaml) executes ```terraform plan``` and outputs the TF plan as artifact
-5. [CodeBuild step](pipeline/buildspec-check-costs.yaml) uses ```infracost breakdown``` to generate costs diff according to changes in TF plan
-6. Approval step pauses the execution of the CodePipeline until the Approver checks the TF plan and the associated changes of costs and approves the deployment of changes
-7. The last [CodeBuild step](pipeline/buildspec-tf-apply.yaml) runs ```terraform apply```
+1. Developer commits changes to a Terraform template in the GitHub repository (1)
+2. CodePipeline is triggered via CodeStar connection (2)
+3. The source code is checked out (3)
+4. [CodeBuild step](pipeline/buildspec-tf-plan.yaml) executes ```terraform plan``` and outputs the TF plan as artifact (4)
+5. [CodeBuild step](pipeline/buildspec-check-costs.yaml) uses ```infracost breakdown``` to generate costs diff according to changes in TF plan, and sends a trigger for the auto-approve Lambda funtion (5)
+6. The pipeline stops at a Manual approval step and the approval process starts:
+   1. Auto-approve functions is triggered by SQS queue with configurable delay (6.1)
+   2. If the approval thresholds are not breached, the function confirms the changes (6.2)
+   3. Alternatively, if the difference in infrastructure costs is larger than the defined absolute or percentage threshold, the function sends a message to the SNS topic (6.3)
+   4. The approver is notified (6.4), checks the TF plan and the associated costs, and approves or rejects the changes manually (6.5)
+7. If the changes were approved, the last [CodeBuild step](pipeline/buildspec-tf-apply.yaml) runs ```terraform apply```
+
 
 ## Directory structure
 ```
+├── infracost-usage.yml
 ├── LICENSE
 ├── README.md
 ├── assets
 │   ├── pipeline.bgwhite.png
 │   └── pipeline.drawio
+├── lambda
+│   └── index.py
 ├── infracost-usage.yml
 ├── pipeline
 │   ├── CodePipeline-Terraform-CF.yaml
 │   ├── buildspec-check-costs.yaml
 │   ├── buildspec-tf-apply.yaml
 │   └── buildspec-tf-plan.yaml
+│   └── costs.json
 └── tf
     ├── backend.tf
     ├── eks.tf
@@ -49,14 +59,17 @@ These variables will be required during deployment of the project's [CloudFormat
 
 | **Name** | **Description** | **Default value** |
 |---|---|---|
+| AutoApproveDelaySeconds | Delay to trigger the auto-approve logic (in seconds) | 30 |
+| AutoApproveDiffAbsoluteThreshold | Delay to trigger the auto-approve logic (in seconds) | 100 |
+| AutoApproveDiffPercentThreshold | Delay to trigger the auto-approve logic (in seconds) | 10 |
 | BuildImageName | Build container for the pipeline step | aws/codebuild/amazonlinux2-x86_64-standard:3.0 |
-| PipelineBucket | S3 bucket to use with CodePipelines and store pipeline artifacts |  |
-| InitialSubscriberEmail | EMail address that will receive manual approval requests | NONE |
-| GitHubRepo | GitHub repository to monitor, as <Organization name>/<repository> |  |
-| GitHubBranch | Branch that will be monitored | main |
-| CodeStarConnectionArn | ARN of the CodeStar - GitHub connection -Infracost [see below](#codestar-connection) |  |
+| CodeStarConnectionArn | ARN of the CodeStar - GitHub connection -Infracost [see below](#codestar-connection) | |
 | Environment | Environment name | dev |
-| InfracostApiKey | API key for Infracost utility - [see below](#infracost-api-key) |  |
+| GitHubBranch | Branch that will be monitored | main |
+| GitHubRepo | GitHub repository to monitor, as <Organization name>/<repository> | |
+| InfracostApiKey | API key for Infracost utility - [see below](#infracost-api-key) | |
+| InitialSubscriberEmail | EMail address that will receive manual approval requests | NONE |
+| PipelineBucket | S3 bucket to use with CodePipelines and store pipeline artifacts |  |
 
 ## CodeStar connection
 AWS CodeStar Connections is a feature that allows services like AWS CodePipeline to access third-party code source provider. For our example, you can now seamlessly connect your GitHub source repository to AWS CodePipeline. This allows you to automate  the build, test, and deploy phases of your release process each time a code change occurs.
