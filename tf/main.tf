@@ -26,31 +26,31 @@ resource "aws_s3_bucket_acl" "private" {
   acl    = "private"
 }
 
-resource "aws_instance" "t3medium" {
+resource "aws_instance" "t3large" {
   ami           = data.aws_ami.amazon-linux-2.id
-  instance_type = "t3.medium"
+  instance_type = "t3.large"
 
   tags = {
-    Name = "Terraform-ExampleServer-t3medium"
+    Name = "'Server-t3.large"
   }
 }
 
 
-#resource "aws_instance" "t3micro" {
+resource "aws_instance" "t3micro" {
+  ami           = data.aws_ami.amazon-linux-2.id
+  instance_type = "t3.micro"
+
+  tags = {
+    Name = "'Server-t3.micro"
+  }
+}
+
+
+#resource "aws_instance" "t32xlarge" {
 #  ami           = data.aws_ami.amazon-linux-2.id
-#  instance_type = "t3.micro"
+#  instance_type = "t3.2xlarge"
 #
 #  tags = {
-#    Name = "Terraform-ExampleServer-t3micro"
+#    Name = "'Server--t3.2xlarge"
 #  }
 #}
-
-
-# resource "aws_instance" "t32xlarge" {
-#   ami           = data.aws_ami.amazon-linux-2.id
-#   instance_type = "t3.2xlarge"
-#
-#   tags = {
-#     Name = "Terraform-ExampleServer--t32xlarge"
-#   }
-# }
