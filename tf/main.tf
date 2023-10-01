@@ -36,21 +36,21 @@ resource "aws_instance" "t3medium" {
 }
 
 
-resource "aws_instance" "t3micro" {
-  ami           = data.aws_ami.amazon-linux-2.id
-  instance_type = "t3.micro"
+#resource "aws_instance" "t3micro" {
+#  ami           = data.aws_ami.amazon-linux-2.id
+#  instance_type = "t3.micro"
+#
+#  tags = {
+#    Name = "Terraform-ExampleServer-t3micro"
+#  }
+#}
 
-  tags = {
-    Name = "Terraform-ExampleServer-t3micro"
-  }
-}
 
-
-# resource "aws_instance" "bigec2" {
+# resource "aws_instance" "t32xlarge" {
 #   ami           = data.aws_ami.amazon-linux-2.id
 #   instance_type = "t3.2xlarge"
 #
 #   tags = {
-#     Name = "Terraform-ExampleServer"
+#     Name = "Terraform-ExampleServer--t32xlarge"
 #   }
 # }
