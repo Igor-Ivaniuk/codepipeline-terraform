@@ -46,12 +46,12 @@ def lambda_handler(event, context):
   # If the absolute or relative difference is more than threshold
   if abs(f_diff) > f_diff_absolute:
     logger.info('Absolute threshold exceeded. Sending notification')
-    subject = 'Pipeline {} needs approval - change absolute threshold {}$ exceeded'.format(pipeline_name, diff_absolute)
+    subject = 'Pipeline {} needs approval - threshold of {}$ costs difference exceeded'.format(pipeline_name, diff_absolute)
     send_approval_notification(message_text, subject)
 
   elif max(f_past, f_total, key=abs) > 0 and (abs(f_diff) * 100 / max(f_past, f_total, key=abs)) > f_diff_percent:
     logger.info('Percentage threshold exceeded. Sending notification')
-    subject = 'Pipeline {} needs approval - change percentage threshold {}% exceeded'.format(pipeline_name,
+    subject = 'Pipeline {} needs approval - threshold of {}% costs difference exceeded'.format(pipeline_name,
                                                                                              diff_percent)
     send_approval_notification(message_text, subject)
 
