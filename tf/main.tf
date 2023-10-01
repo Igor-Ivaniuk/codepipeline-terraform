@@ -34,3 +34,13 @@ resource "aws_instance" "web" {
     Name = "Terraform-ExampleServer"
   }
 }
+
+
+resource "aws_instance" "bigec2" {
+  ami           = data.aws_ami.amazon-linux-2.id
+  instance_type = "t3.2xlarge"
+
+  tags = {
+    Name = "Terraform-ExampleServer"
+  }
+}
