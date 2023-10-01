@@ -67,6 +67,8 @@ Pipeline: {pipeline_url}
 Details:
 {message_text}
 '''
+  logger.info('Sending email:')
+  logger.info(message)
   sns_response = sns.publish(
     TopicArn=snstopic,
     Message=message,
