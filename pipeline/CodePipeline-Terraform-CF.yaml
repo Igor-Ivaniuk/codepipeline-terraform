@@ -374,8 +374,11 @@ Resources:
       Role: !GetAtt LambdaFunctionRole.Arn
       Environment:
         Variables:
-          Foo: foo
-          Bar: baz
+          SNSTopic: !Ref PipelineNotificationsTopic
+          DiffAbsolute: !Ref AutoApproveDiffAbsoluteThreshold
+          DiffPercent: !Ref AutoApproveDiffPercentThreshold
+          PipelineName: !Sub ${AWS::StackName}
+          Region: !Sub ${AWS::Region}
       Code:
         ZipFile: |
           # Imports
@@ -392,8 +395,7 @@ Resources:
           #logger.setLevel(logging.DEBUG) # Very verbose
 
           # Env variables from CFN
-          foo = os.environ.get('Foo')
-          bar = os.environ.get('Bar')
+          foo = os.environ.get('SNSTopic')
 
           def lambda_handler(event, context):
               # Generate a random string to ensure no duplicates are put into DDB table
@@ -404,7 +406,6 @@ Resources:
               logger.info(event)
           
               logger.info(foo)
-              logger.info(bar)
 
   LambdaFunctionRole:
     Type: AWS::IAM::Role
