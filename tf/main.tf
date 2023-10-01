@@ -26,12 +26,22 @@ resource "aws_s3_bucket_acl" "private" {
   acl    = "private"
 }
 
-resource "aws_instance" "web" {
+resource "aws_instance" "t3medium" {
+  ami           = data.aws_ami.amazon-linux-2.id
+  instance_type = "t3.medium"
+
+  tags = {
+    Name = "Terraform-ExampleServer-t3medium"
+  }
+}
+
+
+resource "aws_instance" "t3micro" {
   ami           = data.aws_ami.amazon-linux-2.id
   instance_type = "t3.micro"
 
   tags = {
-    Name = "Terraform-ExampleServer"
+    Name = "Terraform-ExampleServer-t3micro"
   }
 }
 
