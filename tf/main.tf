@@ -35,22 +35,20 @@ resource "aws_instance" "t3large" {
   }
 }
 
-
 resource "aws_instance" "t3nano" {
- ami           = data.aws_ami.amazon-linux-2.id
- instance_type = "t3.nano"
+  ami           = data.aws_ami.amazon-linux-2.id
+  instance_type = "t3.nano"
 
- tags = {
-   Name = "Server-t3.nano"
- }
+  tags = {
+    Name = "Server-t3.nano"
+  }
 }
 
-
 resource "aws_instance" "t32xlarge" {
- ami           = data.aws_ami.amazon-linux-2.id
- instance_type = "t3.2xlarge"
+  ami           = data.aws_ami.amazon-linux-2.id
+  instance_type = "t3.2xlarge"
 
- tags = {
-   Name = "'Server--t3.2xlarge"
- }
+  tags = {
+    Name = "'Server--t3.2xlarge"
+  }
 }
