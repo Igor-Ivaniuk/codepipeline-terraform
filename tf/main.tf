@@ -40,7 +40,7 @@ resource "aws_instance" "t3large" {
 #   instance_type = "t3.2xlarge"
 
 #   tags = {
-#     Name = "Server--t3.2xlarge"
+#     Name = "Server-t3.2xlarge"
 #   }
 # }
 
