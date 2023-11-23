@@ -26,29 +26,26 @@ resource "aws_s3_bucket_acl" "private" {
   acl    = "private"
 }
 
-resource "aws_instance" "t3large" {
+resource "aws_instance" "t3_large" {
   ami           = data.aws_ami.amazon-linux-2.id
   instance_type = "t3.large"
-
   tags = {
     Name = "Server-t3.large"
   }
 }
 
-# resource "aws_instance" "t32xlarge" {
+# resource "aws_instance" "t3_nano" {
 #   ami           = data.aws_ami.amazon-linux-2.id
-#   instance_type = "t3.2xlarge"
-
+#   instance_type = "t3.nano"
 #   tags = {
-#     Name = "Server-t3.2xlarge"
+#     Name = "Server-t3.nano"
 #   }
 # }
 
-# resource "aws_instance" "t3nano" {
+# resource "aws_instance" "t3_2xlarge" {
 #   ami           = data.aws_ami.amazon-linux-2.id
-#   instance_type = "t3.nano"
-
+#   instance_type = "t3.2xlarge"
 #   tags = {
-#     Name = "Server-t3.nano"
+#     Name = "Server-t3.2xlarge"
 #   }
 # }
