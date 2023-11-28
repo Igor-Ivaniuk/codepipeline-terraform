@@ -22,7 +22,6 @@ phases:
       - "cd ${CODEBUILD_SRC_DIR_TerraformPlan}/${CODE_SRC_DIR}"
       - "echo ## COSTS CHECK : Starting the costs check"
       - infracost breakdown --usage-file infracost-usage.yml --path tf/tfapply.json --format json --out-file breakdown.json
-      - cat breakdown.json
       - infracost output --path breakdown.json --format table
       - infracost output --path breakdown.json --format diff
       - "export DiffMessage=`infracost output --path breakdown.json --format diff`"
