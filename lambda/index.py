@@ -51,8 +51,7 @@ def lambda_handler(event, context):
 
   elif max(f_past, f_total, key=abs) > 0 and (abs(f_diff) * 100 / max(f_past, f_total, key=abs)) > f_diff_percent:
     logger.info('Percentage threshold exceeded. Sending notification')
-    subject = 'Pipeline {} needs approval - threshold of {}% costs difference exceeded'.format(pipeline_name,
-                                                                                             diff_percent)
+    subject = 'Pipeline {} needs approval - threshold of {}% costs difference exceeded'.format(pipeline_name, diff_percent)
     send_approval_notification(message_text, subject)
 
   else:
