@@ -20,6 +20,7 @@ phases:
   build:
     commands:
       - "cd ${CODEBUILD_SRC_DIR_TerraformPlan}/${CODE_SRC_DIR}"
+      - "echo ## COSTS CHECK : Starting the costs check"
       - infracost breakdown --usage-file infracost-usage.yml --path tf/tfapply.json --format json --out-file breakdown.json
       - cat breakdown.json
       - infracost output --path breakdown.json --format table
@@ -28,10 +29,6 @@ phases:
       - "export DiffTotalMonthlyCost=`jq -r '.diffTotalMonthlyCost' breakdown.json`"
       - "export PastTotalMonthlyCost=`jq -r '.pastTotalMonthlyCost' breakdown.json`"
       - "export TotalMonthlyCost=`jq -r '.totalMonthlyCost' breakdown.json`"
-      - echo ${DiffMessage}
-      - echo ${TotalMonthlyCost}
-      - echo ${PastTotalMonthlyCost}
-      - echo ${DiffTotalMonthlyCost}
       - aws sqs send-message --queue-url $SQS_QUEUE --message-attributes "$(sed -e s/insert-total-monthly-cost/${TotalMonthlyCost}/g -e s/insert-past-total-monthly-cost/${PastTotalMonthlyCost}/g -e s/insert-diff-total-monthly-cost/${DiffTotalMonthlyCost}/g pipeline/costs.json)" --message-body "${DiffMessage}"
 artifacts:
   files:
